@@ -1,0 +1,330 @@
+variables:
+  MAVEN_OPTS: -Dmaven.repo.local=$CI_PROJECT_DIR/.repository
+  project: "ssh url"
+ 
+cache:
+  untracked: true
+  paths:
+  - project
+
+stages:
+- clean
+- prepare
+- build-1
+- build-2
+- build-3
+- build-4
+- build-5
+- build-6
+- build-7
+- build-8
+- build-9
+- build-10
+- build-master
+- inventory
+- galaxy
+- review
+
+before_script:
+  - npm set strict-ssl false
+  - chmod +x maven-build.sh
+
+delete-workspace:
+  stage: clean
+  script:
+    - rm -rf $HOME/cache/$CI_PROJECT_PATH/*
+    - rm -rf $CI_PROJECT_DIR/*
+  only:
+    - web
+    - schedules
+
+prepare-workspace-branches:
+  stage: prepare
+  allow_failure: false
+  script:
+    - sed -i "s/vmname/$VM_NAME/g" create-vm.sh
+    - chmod +x create-vm.sh
+    - vm_id=`./create-vm.sh` && sleep 90
+    - xo-cli vm.restart id=$vm_id
+    - echo $vm_id > $HOME/$VM_NAME.txt
+    - ls -l $HOME/$VM_NAME.txt && cat $HOME/$VM_NAME.txt
+    - DIR_master=master
+    - git clone -b $FEATURE_BRANCH_MASTER $master $DIR_master
+    - cd $DIR_master
+    - mvn clean install -P mdc-test-sa
+    - git status
+    - cd $CI_PROJECT_DIR
+  only:
+    refs:
+      - web
+      - schedules
+    variables:
+      - $MASTER_FROM_BRANCHES == 'true'
+
+prepare-workspace-develop:
+  stage: prepare
+  allow_failure: false
+  script:
+    - sed -i "s/vmname/$VM_NAME/g" create-vm.sh
+    - chmod +x create-vm.sh
+    - vm_id=`./create-vm.sh` && sleep 90
+    - xo-cli vm.restart id=$vm_id
+    - echo $vm_id > $HOME/$VM_NAME.txt
+    - ls -l $HOME/$VM_NAME.txt && cat $HOME/$VM_NAME.txt
+    - DIR_master=master
+    - git clone $master $DIR_master
+    - cd $DIR_master
+    - mvn clean install -P mdc-test-sa
+    - git status
+    - cd $CI_PROJECT_DIR
+  only:
+    refs:
+      - web
+      - schedules
+    variables:
+      - $MASTER_FROM_BRANCHES == 'false'
+
+build-1:
+  stage: build-1
+  allow_failure: false
+  script:
+    - DIR1=`basename $PROJECT1 | sed -E 's/(.git)*$//g'`
+    - source ./repos.sh $PROJECT1
+    - REPO1=$(eval echo \$"$PROJECT1")
+    - echo $REPO1
+    - if [ -d "$DIR1" ]; then cd $DIR1 && git checkout develop && git pull && git checkout $FEATURE_BRANCH1; else git clone $REPO1 $DIR1 && cd $DIR1 && git checkout $FEATURE_BRANCH1; fi;
+    - ../maven-build.sh $PROJECT1 && pwd
+    - git status
+    - cd $CI_PROJECT_DIR
+  only:
+    variables:
+      - $PROJECT1
+
+build-2:
+  stage: build-2
+  allow_failure: false
+  script:
+    - DIR2=`basename $PROJECT2 | sed -E 's/(.git)*$//g'`
+    - source ./repos.sh $PROJECT2
+    - REPO2=$(eval echo \$"$PROJECT2")
+    - echo $REPO2
+    - if [ -d "$DIR2" ]; then cd $DIR2 && git checkout develop && git pull && git checkout $FEATURE_BRANCH2; else git clone $REPO2 $DIR2 && cd $DIR2 && git checkout $FEATURE_BRANCH2; fi;
+    - ../maven-build.sh $PROJECT2 && pwd
+    - git status
+    - cd $CI_PROJECT_DIR
+  only:
+    variables:
+      - $PROJECT2
+
+build-3:
+  stage: build-3
+  allow_failure: false
+  script:
+    - DIR3=`basename $PROJECT3 | sed -E 's/(.git)*$//g'`
+    - source ./repos.sh $PROJECT3
+    - REPO3=$(eval echo \$"$PROJECT3")
+    - echo $REPO3
+    - if [ -d "$DIR3" ]; then cd $DIR3 && git checkout develop && git pull && git checkout $FEATURE_BRANCH3; else git clone $REPO3 $DIR3 && cd $DIR3 && git checkout $FEATURE_BRANCH3; fi;
+    - ../maven-build.sh $PROJECT3 && pwd
+    - git status
+    - cd $CI_PROJECT_DIR
+  only:
+    variables:
+      - $PROJECT3
+
+build-4:
+  stage: build-4
+  allow_failure: false
+  script:
+    - DIR4=`basename $PROJECT4 | sed -E 's/(.git)*$//g'`
+    - source ./repos.sh $PROJECT4
+    - REPO4=$(eval echo \$"$PROJECT4")
+    - echo $REPO4
+    - if [ -d "$DIR4" ]; then cd $DIR4 && git checkout develop && git pull && git checkout $FEATURE_BRANCH4; else git clone $REPO4 $DIR4 && cd $DIR4 && git checkout $FEATURE_BRANCH4; fi;
+    - ../maven-build.sh $PROJECT4 && pwd
+    - git status
+    - cd $CI_PROJECT_DIR
+  only:
+    variables:
+      - $PROJECT4
+
+build-5:
+  stage: build-5
+  allow_failure: false
+  script:
+    - DIR5=`basename $PROJECT5 | sed -E 's/(.git)*$//g'`
+    - source ./repos.sh $PROJECT5
+    - REPO5=$(eval echo \$"$PROJECT5")
+    - echo $REPO5
+    - if [ -d "$DIR5" ]; then cd $DIR5 && git checkout develop && git pull && git checkout $FEATURE_BRANCH5; else git clone $REPO5 $DIR5 && cd $DIR5 && git checkout $FEATURE_BRANCH5; fi;
+    - ../maven-build.sh $PROJECT5 && pwd
+    - git status
+    - cd $CI_PROJECT_DIR
+  only:
+    variables:
+      - $PROJECT5
+
+build-6:
+  stage: build-6
+  allow_failure: false
+  script:
+  - DIR6=`basename $PROJECT6 | sed -E 's/(.git)*$//g'`
+  - source ./repos.sh $PROJECT6
+  - REPO6=$(eval echo \$"$PROJECT6")
+  - echo $REPO6
+  - if [ -d "$DIR6" ]; then cd $DIR6 && git checkout develop && git pull && git checkout $FEATURE_BRANCH6; else git clone $REPO6 $DIR6 && cd $DIR6 && git checkout $FEATURE_BRANCH6; fi;
+  - ../maven-build.sh $PROJECT6 && pwd
+  - git status
+  - cd $CI_PROJECT_DIR
+  only:
+    variables:
+    - $PROJECT6
+
+build-7:
+  stage: build-7
+  allow_failure: false
+  script:
+  - DIR7=`basename $PROJECT7 | sed -E 's/(.git)*$//g'`
+  - source ./repos.sh $PROJECT7
+  - REPO7=$(eval echo \$"$PROJECT7")
+  - echo $REPO7
+  - if [ -d "$DIR7" ]; then cd $DIR7 && git checkout develop && git pull && git checkout $FEATURE_BRANCH7; else git clone $REPO7 $DIR7 && cd $DIR7 && git checkout $FEATURE_BRANCH7; fi;
+  - ../maven-build.sh $PROJECT7 && pwd
+  - git status
+  - cd $CI_PROJECT_DIR
+  only:
+    variables:
+    - $PROJECT7
+
+build-8:
+  stage: build-8
+  allow_failure: false
+  script:
+  - DIR8=`basename $PROJECT8 | sed -E 's/(.git)*$//g'`
+  - source ./repos.sh $PROJECT8
+  - REPO8=$(eval echo \$"$PROJECT8")
+  - echo $REPO8
+  - if [ -d "$DIR8" ]; then cd $DIR8 && git checkout develop && git pull && git checkout $FEATURE_BRANCH8; else git clone $REPO8 $DIR8 && cd $DIR8 && git checkout $FEATURE_BRANCH8; fi;
+  - ../maven-build.sh $PROJECT8 && pwd
+  - git status
+  - cd $CI_PROJECT_DIR
+  only:
+    variables:
+    - $PROJECT8
+
+build-9:
+  stage: build-9
+  allow_failure: false
+  script:
+  - DIR9=`basename $PROJECT9 | sed -E 's/(.git)*$//g'`
+  - source ./repos.sh $PROJECT9
+  - REPO9=$(eval echo \$"$PROJECT9")
+  - echo $REPO9
+  - if [ -d "$DIR9" ]; then cd $DIR9 && git checkout develop && git pull && git checkout $FEATURE_BRANCH9; else git clone $REPO9 $DIR9 && cd $DIR9 && git checkout $FEATURE_BRANCH9 fi;
+  - ../maven-build.sh $PROJECT9 && pwd
+  - git status
+  - cd $CI_PROJECT_DIR
+  only:
+    variables:
+    - $PROJECT9
+
+build-10:
+  stage: build-10
+  allow_failure: false
+  script:
+  - DIR10=`basename $PROJECT10 | sed -E 's/(.git)*$//g'`
+  - source ./repos.sh $PROJECT10
+  - REPO10=$(eval echo \$"$PROJECT10")
+  - echo $REPO10
+  - if [ -d "$DIR10" ]; then cd $DIR10 && git checkout develop && git pull && git checkout $FEATURE_BRANCH10; else git clone $REPO10 $DIR10 && cd $DIR10 && git checkout $FEATURE_BRANCH10 fi;
+  - ../maven-build.sh $PROJECT10 && pwd
+  - git status
+  - cd $CI_PROJECT_DIR
+  only:
+    variables:
+    - $PROJECT10
+
+build-master-develop:
+  stage: build-master
+  allow_failure: false
+  script:
+    - DIR_master=master
+    - if [ -d "$DIR_master" ]; then cd $DIR_master && git checkout develop && git pull; else git clone $master $DIR_master && cd $DIR_master; fi;
+    - mvn clean install -P mdc-test-sa -o
+    - git status
+    - cd $CI_PROJECT_DIR
+  only:
+    refs:
+      - web
+      - schedules
+    variables:
+      - $MASTER_FROM_BRANCHES == 'false'
+
+build-master-branches:
+  stage: build-master
+  allow_failure: false
+  script:
+    - DIR_master=master
+    - if [ -d "$DIR_master" ]; then cd $DIR_master && git checkout develop && git pull && git checkout $FEATURE_BRANCH_MASTER; else git clone $master $DIR_master && cd $DIR_master && git checkout $FEATURE_BRANCH_MASTER; fi;
+    - mvn clean install -P mdc-test-sa -o
+    - git status
+    - cd $CI_PROJECT_DIR
+  only:
+    refs:
+      - web
+      - schedules
+    variables:
+      - $MASTER_FROM_BRANCHES == 'true'
+
+prepare-install:
+  stage: galaxy
+  allow_failure: false
+  script:
+    - cp master/target/1-host-online.inventory $HOSTNAME.inventory
+    - sed -i s/change_this_cluster/${HOSTNAME}_cluster/g $HOSTNAME.inventory
+    - sed -i s/change_this_group/${HOSTNAME}_group/g $HOSTNAME.inventory
+    - sed -i s/xxxxxx.et.mdc-bt.net/$ADDRESS/g $HOSTNAME.inventory
+    - cat $HOSTNAME.inventory
+    - ansible all -i $HOSTNAME.inventory -m replace -a "path=/etc/hosts regexp='^127\.0\.0\.1(.*(?<! $HOSTNAME)$)' replace='127.0.0.1\1 $HOSTNAME'" --become
+    - echo test > master/target/vault.pass
+    - ansible-galaxy install -r master/target/master-jenkins-ansible/requirements.yml -p master/target/master-jenkins-ansible/roles/ --force
+  only:
+    - web
+    - schedules
+  retry: 2
+  variables:
+    ADDRESS: $VM_NAME.et.mdc-bt.net
+    HOSTNAME: $VM_NAME
+
+review:
+  stage: review
+  allow_failure: false
+  script:
+    - ansible-playbook -i $HOSTNAME.inventory --vault-password-file master/target/vault.pass master/target/master-jenkins-ansible/master.yml
+  only:
+    - web
+    - schedules
+  retry: 2
+  environment:
+    name: review/$VM_NAME
+    url: http://${VM_NAME}.et.mdc-bt.net
+    on_stop: stop_review
+  variables:
+    ADDRESS: $VM_NAME.et.mdc-bt.net
+    HOSTNAME: $VM_NAME
+
+stop_review:
+  stage: review
+  allow_failure: false
+  script:
+    - cat $HOME/$VM_NAME.txt
+    - vm_id=`cat $HOME/$VM_NAME.txt`
+    - xo-cli vm.delete id=$vm_id deleteDisks=true
+    - rm $HOME/$VM_NAME.txt
+  only:
+    - web
+    - schedules
+  when: manual
+  environment:
+    name: review/$VM_NAME
+    action: stop
